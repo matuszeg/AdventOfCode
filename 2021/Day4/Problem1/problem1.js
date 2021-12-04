@@ -39,16 +39,18 @@ document.getElementById('inputfile').addEventListener('change', function () {
             document.getElementById('drawn_numbers').innerText += ` ${callNumber}`;
 
             boardElements = "";
+            let winnerFound = false;
 
             let sumUncalled = 0;
             for (let board of boards) {
-                boardElements += '<div class="board">';
+                let boardElement = "";
+                //boardElements += '<div class="board">';
                 let columnSums = [0,0,0,0,0];
                 if (!bSuccess) {
                     sumUncalled = 0;
                 }
                 for (let i =0; i<board.length; i++) {
-                    boardElements += '<div class="row">'
+                    boardElement += '<div class="row">'
                     const row = board[i];
                     let numRowFired = 0;
                     for (let tile of row) {
@@ -59,23 +61,21 @@ document.getElementById('inputfile').addEventListener('change', function () {
                         if (tile.fired) {
                             numRowFired++;
                             columnSums[i]++;
-                            boardElements += `<div class="board_number called" >${tile.num}</div>`;
+                            boardElement += `<div class="board_number called" >${tile.num}</div>`;
                         } else {
                             if (!bSuccess) {
                                 sumUncalled += Number(tile.num);
                             }
-                            boardElements += `<div class="board_number">${tile.num}</div>`;
+                            boardElement += `<div class="board_number">${tile.num}</div>`;
                         }
                     }
 
-                    boardElements += '</div>';
+                    boardElement += '</div>';
 
                     if (numRowFired === 5) {
                         bSuccess = true;
                     }
                 }
-
-                boardElements += '</div>';
 
                 for (let columnSum of columnSums) {
                     if (columnSum === 5) {
@@ -83,13 +83,20 @@ document.getElementById('inputfile').addEventListener('change', function () {
                         break;
                     }
                 }
+
+                if (bSuccess && !winnerFound) {
+                    winnerFound = true;
+                    boardElement = '<div class="board winner">' + boardElement + '</div>';
+                } else {
+                    boardElement = '<div class="board">' + boardElement + '</div>';
+                }
+
+                boardElements += boardElement;
             }
 
             document.getElementById('boards').innerHTML = boardElements;
 
             if (bSuccess) {
-                console.log(sumUncalled);
-                console.log(callNumber);
                 answer = sumUncalled * Number(callNumber);
                 break;
             }
