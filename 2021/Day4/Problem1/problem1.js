@@ -1,6 +1,17 @@
+const delay = ms => new Promise(res => setTimeout(res, ms));
+
+const ballSpeedSliderElement = document.getElementById("ballSpeed");
+const ballSpeedValueElement = document.getElementById("ballSpeedValue");
+ballSpeedValueElement.innerHTML = ballSpeedSliderElement.value + " milliseconds"; // Display the default slider value
+
+// Update the current slider value (each time you drag the slider handle)
+ballSpeedSliderElement.oninput = function() {
+    ballSpeedValueElement.innerHTML = this.value + " milliseconds";
+}
+
 document.getElementById('inputfile').addEventListener('change', function () {
     const reader = new FileReader();
-    reader.onload= function() {
+    reader.onload= async function() {
 
         const inputs = reader.result.split(/\r|\n/)
 
@@ -101,7 +112,7 @@ document.getElementById('inputfile').addEventListener('change', function () {
                 break;
             }
 
-
+            await delay(document.getElementById("ballSpeed").value);
         }
 
          document.getElementById("answer").innerText = answer + "";
