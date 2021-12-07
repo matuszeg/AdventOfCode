@@ -1,0 +1,6 @@
+.coordinate {
+    display:grid;
+    border: 1px solid;
+    #width: 15px;
+    #height: 15px;
+}
