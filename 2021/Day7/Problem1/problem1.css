@@ -1,0 +1,11 @@
+.coordinate {
+    #display:grid;
+    #border: 1px solid;
+}
+
+.ship {
+    position:relative;
+    background-color: green;
+    width:10px;
+    height:5px;
+}
