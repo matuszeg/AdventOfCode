@@ -41,6 +41,8 @@ document.getElementById('inputfile').addEventListener('change', function () {
         const max = inputs[inputs.length-1];
         const median = inputs[inputs.length/2-1];
 
+        console.log(median);
+
         let fuelCost = 0;
 
         for (let i = 0; i < inputs.length; i++) {
@@ -51,6 +53,8 @@ document.getElementById('inputfile').addEventListener('change', function () {
         document.getElementById('grid').style.gap = `1px`;
         document.getElementById('grid').style.gridTemplateColumns = inputs[inputs.length-1] + 'fr';
         document.getElementById('grid').style.gridTemplateRows = inputs.length + 'fr';
+
+        document.getElementById("answer").innerText = fuelCost + "";
 
         let isDone = false;
 
@@ -71,10 +75,7 @@ document.getElementById('inputfile').addEventListener('change', function () {
             DisplayStep(inputs, max);
             await delay(document.getElementById("moveSpeed").value);
         }
-
-        document.getElementById("answer").innerText = fuelCost + "";
     }
-
 
     reader.readAsText(this.files[0]);
 });
