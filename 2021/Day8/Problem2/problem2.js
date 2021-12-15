@@ -56,7 +56,16 @@ function CommonCharacters3(word1, word2, word3) {
 }
 
 async function DisplayCorrectPositions(positions) {
-    document.getElementById('workzone').innerText = `${positions.join('     ')}`;
+    for (let i = 1; i <= positions.length; i++) {
+        document.getElementById('slot_' + i).innerText = `${positions[i-1]}`;
+    }
+    await delay(document.getElementById("moveSpeed").value);
+}
+
+async function DisplayNumbers(numbers) {
+    for (let i = 0; i < numbers.length; i++) {
+        document.getElementById('number_pattern_' + i).innerText = `${numbers[i]}`;
+    }
     await delay(document.getElementById("moveSpeed").value);
 }
 
@@ -73,8 +82,6 @@ document.getElementById('inputfile').addEventListener('change', function () {
         })
 
         let totalOutputValue = 0;
-
-        let html = '';
 
         for (const line of inputs) {
             const leftSide = line[0];
@@ -94,8 +101,10 @@ document.getElementById('inputfile').addEventListener('change', function () {
                 return 0;
             });
 
-            await DisplayCorrectPositions(correctPositions);
+            await DisplayNumbers(['','','','','','','','','','']);
 
+            await DisplayCorrectPositions(correctPositions);
+            document.getElementById("input").innerText = leftSide.join(' , ') + '  |  ' + rightSide.join(' , ');
             const SetCorrectPositions = async (index, newValue) => {
                 correctPositions[index] = newValue;
                 await DisplayCorrectPositions(correctPositions);
@@ -147,12 +156,18 @@ document.getElementById('inputfile').addEventListener('change', function () {
 
 
             const number0Word = correctPositions[0] + correctPositions[1] + correctPositions[2] + correctPositions[4] + correctPositions[5] + correctPositions[6];
+            const number1Word = correctPositions[2] + correctPositions[5];
             const number2Word = correctPositions[0] + correctPositions[2] + correctPositions[3] + correctPositions[4] + correctPositions[6];
             const number3Word = correctPositions[0] + correctPositions[2] + correctPositions[3] + correctPositions[5] + correctPositions[6];
-
+            const number4Word = correctPositions[1] + correctPositions[2] + correctPositions[3] + correctPositions[5];
             const number5Word = correctPositions[0] + correctPositions[1] + correctPositions[3] + correctPositions[5] + correctPositions[6];
             const number6Word = correctPositions[0] + correctPositions[1] + correctPositions[3] + correctPositions[4] + correctPositions[5] + correctPositions[6];
+            const number7Word = correctPositions[0] + correctPositions[2] + correctPositions[5];
+            const number8Word = correctPositions[0] + correctPositions[1] + correctPositions[2] + correctPositions[3] + correctPositions[4] + correctPositions[5] + correctPositions[6]
             const number9Word = correctPositions[0] + correctPositions[1] + correctPositions[2] + correctPositions[3] + correctPositions[5] + correctPositions[6];
+
+            const numbers = [number0Word, number1Word, number2Word, number3Word, number4Word, number5Word, number6Word, number7Word, number8Word, number9Word]
+            await DisplayNumbers(numbers)
 
             let outputWord = '';
 
@@ -178,7 +193,6 @@ document.getElementById('inputfile').addEventListener('change', function () {
                         }
                         break;
                     case 6:
-                        console.log(outputValue + ' ' + number6Word + ' ' + CommonCharacterCount(number6Word, outputValue));
                         if (CommonCharacterCount(number0Word, outputValue) === 6) {
                             outputWord += '0';
                         } else if (CommonCharacterCount(number6Word, outputValue) === 6) {
@@ -196,39 +210,12 @@ document.getElementById('inputfile').addEventListener('change', function () {
 
             }
 
-
             totalOutputValue += Number(outputWord);
 
+            document.getElementById("numbers").innerHTML += `<div class='row'>${line[0].map((num, index) => num ).join('  ')}  | ${line[1].map((num, index) => num + `(${outputWord[index]})`).join('  ')} </div>`;
 
-            html += `<div class='row'>${line[0].join('  ')}  |`;
-            for (const outputValue of rightSide) {
-                const numCharacters = outputValue.length;
-                let bHighlight = false;
-                switch (numCharacters) {
-                    case 2:
-                    //1
-                    case 4:
-                    //4
-                    case 3:
-                    //7
-                    case 7:
-                        //8
-                        bHighlight=true;
-                        break;
-                    default:
-                        break;
-                }
-
-                if (bHighlight) {
-                    html += `  <span style="color: saddlebrown;font-weight: bolder">${outputValue}</span>`;
-                } else {
-                    html += "  " + outputValue;
-                }
-            }
-            html += `</div>`;
         }
 
-        document.getElementById("numbers").innerHTML = html;
         document.getElementById("answer").innerText = totalOutputValue + "";
     }
 
