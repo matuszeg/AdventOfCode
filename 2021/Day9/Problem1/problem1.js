@@ -12,7 +12,6 @@ document.getElementById('inputfile').addEventListener('change', function () {
 
         let gridRows = '';
         let gridColumns = '';
-        console.log(inputs[0]);
         for (let i = 0; i < inputs.length; i++) {
             gridRows += "1fr ";
             for (let j = 0; j < inputs[i].length; j++) {
