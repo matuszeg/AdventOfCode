@@ -1,0 +1,17 @@
+#map {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+}
+
+.line-corrupt {
+    background-color: lightcoral;
+}
+
+.auto-complete {
+    background-color: greenyellow;
+}
