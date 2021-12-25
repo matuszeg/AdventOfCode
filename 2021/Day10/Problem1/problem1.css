@@ -1,0 +1,19 @@
+#map {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+}
+
+.corrupt {
+    display: flex;
+    font-weight: bolder;
+    background-color: greenyellow;
+}
+
+.line-corrupt {
+    background-color: lightcoral;
+}
