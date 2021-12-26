@@ -1,14 +1,5 @@
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
-const moveSpeedSliderElement = document.getElementById("moveSpeed");
-const moveSpeedValueElement = document.getElementById("moveSpeedValue");
-moveSpeedValueElement.innerHTML = moveSpeedSliderElement.value + " milliseconds"; // Display the default slider value
-
-// Update the current slider value (each time you drag the slider handle)
-moveSpeedSliderElement.oninput = function() {
-    moveSpeedValueElement.innerHTML = this.value + " milliseconds";
-}
-
 const caveMap = new Map();
 let cy = undefined;
 
