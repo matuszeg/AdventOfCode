@@ -106,12 +106,20 @@ function BuildGraphData() {
     };
 }
 
-function HighlightNode(id) {
-    cy.getElementById(id).style('background-color', "#7efa3b");
+function HighlightNode(id, bDuplicate) {
+    if (bDuplicate) {
+        cy.getElementById(id).style('background-color', "#00eaff");
+    } else {
+        cy.getElementById(id).style('background-color', "#7efa3b");
+    }
 }
 
-function HighlightEdge(id) {
-    cy.getElementById(id).style('line-color', "#7efa3b");
+function HighlightEdge(id, bDuplicate) {
+    if (bDuplicate) {
+        cy.getElementById(id).style('line-color', "#ff0090");
+    } else {
+        cy.getElementById(id).style('line-color', "#7efa3b");
+    }
 }
 
 function HighlightPath(path) {
@@ -121,11 +129,19 @@ function HighlightPath(path) {
     }
     DrawGraph(BuildGraphData());
 
+    const alreadyProcessed = {};
+    alreadyProcessed[pathArray[0]] = 1;
     HighlightNode(pathArray[0]);
 
     for (let i = 0; i < pathArray.length-1; i++) {
-        HighlightEdge(pathArray[i]+"-"+pathArray[i+1]);
-        HighlightNode(pathArray[i+1]);
+        const edge = pathArray[i]+"-"+pathArray[i+1];
+        const reverseEdge = pathArray[i+1]+"-"+pathArray[i];
+        const edgeDupe = alreadyProcessed[edge] || alreadyProcessed[reverseEdge];
+        HighlightEdge(edge, edgeDupe);
+        HighlightNode(pathArray[i+1], alreadyProcessed[pathArray[i+1]]=== 1);
+        alreadyProcessed[pathArray[i+1]] = 1;
+        alreadyProcessed[edge] = 1;
+        alreadyProcessed[reverseEdge] = 1;
     }
 }
 
