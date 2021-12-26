@@ -1,0 +1,18 @@
+#map {
+    display: flex;
+    flex-direction: column;
+}
+
+.line {
+    display: flex;
+    flex-direction: row;
+}
+
+.octopus {
+    display: flex;
+}
+
+.flash {
+    background-color: black;
+    color: white;
+}
