@@ -1,0 +1,9 @@
+.active {
+    font-weight: bolder;
+    background-color: aqua;
+}
+
+.final {
+    font-weight: bolder;
+    background-color: coral;
+}
