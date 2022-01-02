@@ -18,7 +18,6 @@ class TreeNode {
         this.y = y;
         this.id = x + ',' + y;
         this.parent = parent;
-        //this.descendants = [];
         this.cachedPathCost = this.value + (this.parent !== null ? this.parent.getPathCost() : 0);
     }
 
@@ -135,27 +134,6 @@ async function PrintMap(map, currentNode) {
     await delay(document.getElementById("moveSpeed").value);
 }
 
-function FilterLeaves(leaf) {
-    leaves = leaves.filter(filterLeaf => {
-        return !(leaf.x === filterLeaf.x && leaf.y === filterLeaf.y);
-    });
-    // for (let i = leaves.length-1; i >= 0 && i>= leaves.length-4; i--) {
-    //     const leaf = leaves[i];
-    //
-    //     leaves = leaves.filter((filterLeaf,index) => {
-    //         if (index>= i) {
-    //             return true;
-    //         }
-    //
-    //         if (leaf.x === filterLeaf.x && leaf.y === filterLeaf.y) {
-    //             i--;
-    //             return false;
-    //         }
-    //         return true;
-    //     });
-    // }
-}
-
 function InsertDependantsSorted(descendants, finalX, finalY) {
     let index = descendants.length-1;
 
@@ -212,14 +190,12 @@ function GenerateInput(startingInput) {
 document.getElementById('inputfile').addEventListener('change', function () {
     const reader = new FileReader();
     reader.onload= async function() {
-        //const fiveReaderResult =  + reader.result + reader.result + reader.result + reader.result;
         const inputs = GenerateInput(reader.result);
 
         leaves.push(new TreeNode(0,0,0, null));
 
         const finalX = inputs.length - 1;
         const finalY = inputs[0].length - 1;
-
         let currentPathCost = 0;
 
 
@@ -254,11 +230,23 @@ document.getElementById('inputfile').addEventListener('change', function () {
             });
 
             if (descendants.length > 0) {
-                //leaves.forEach(leaf => FilterLeaves(descendants));
                 InsertDependantsSorted(descendants, finalX, finalY);
             }
 
+            if (leaves.length > 1000) {
+                let bestDistance = 9999999999999;
+                for (let distLeaf of leaves) {
+                    const distance = (finalX - distLeaf.x)*(finalX - distLeaf.x) + (finalY - distLeaf.y)*(finalY - distLeaf.y);
+                    if (distance < bestDistance) {
+                        bestDistance = distance;
+                    }
+                }
 
+                leaves = leaves.filter(leaf => {
+                    const distance = (finalX - leaf.x)*(finalX - leaf.x) + (finalY - leaf.y)*(finalY - leaf.y);
+                    return (distance - bestDistance) <= 10000;
+                });
+            }
 
 
         }
@@ -268,7 +256,6 @@ document.getElementById('inputfile').addEventListener('change', function () {
 
         document.getElementById("answer").innerText = answer + "";
     }
-
 
     reader.readAsText(this.files[0]);
 });
