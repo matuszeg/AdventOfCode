@@ -1,0 +1,22 @@
+#data {
+    display: flex;
+    flex-direction: column;
+}
+
+.packet {
+    display: flex;
+    flex-direction: column;
+}
+
+.sub-packets {
+    margin-left: 10px;
+    display: flex;
+    flex-direction: row;
+    border: 1px dotted;
+}
+
+.sub-packet {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid;
+}
