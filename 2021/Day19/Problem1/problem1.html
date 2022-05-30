@@ -1,0 +1,31 @@
+<html>
+<head><title>Problem 1</title></head>
+<link rel="stylesheet" href="problem1.css">
+<body>
+
+<div class="slidecontainer">
+    <h2>Speed</h2>
+    <input type="range" min="0" max="2000" value="20" class="slider" id="moveSpeed" />
+    <h3 id="moveSpeedValue">20</h3>
+</div>
+
+<div>
+    <label>Show Graph?</label>
+    <input type="checkbox" id="show" checked />
+</div>
+
+<div>
+    <h2>Input:</h2>
+    <input type="file" name="inputfile" id="inputfile" />
+</div>
+
+<div>
+    <h2>Answer:</h2>
+    <h3 id="answer"></h3>
+</div>
+<div id="legend"></div>
+
+</body>
+<script src="three.js"></script>
+<script src="problem1.js"></script>
+</html>
