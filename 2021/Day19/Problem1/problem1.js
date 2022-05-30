@@ -33,6 +33,13 @@ const colors = [
     "#0ca7a0",
     "#0886f3",
     "#974a6c",
+    "#6e6c6c",
+    "#607a51",
+    "#96b4ac",
+    "#08198d",
+    "#6e728a",
+    "#da5d7f",
+    "#5b732b",
 ]
 
 const rotations = [
@@ -55,7 +62,7 @@ function drawLegend(num) {
 }
 
 function unshift(array, nums) {
-    let newArray = [...array];
+    let newArray = array;
 
     for (const num of nums) {
         switch (num) {
@@ -82,8 +89,8 @@ function unshift(array, nums) {
 }
 
 function shift(array, nums) {
-    let newArray = [...array];
-    
+    let newArray = array;
+
     for (let i = nums.length-1; i>=0; i--) {
         const num = nums[i];
         switch (num) {
@@ -211,24 +218,33 @@ class Beacon {
         this.id = id
         this.coordinates = coordinates;
         this.otherBeaconDistances = {};
+        this.potentialOtherBeaconDistances = {};
     }
 
     addOtherBeaconDistance(otherBeacon) {
         this.otherBeaconDistances[otherBeacon.id] = this.distanceTo(otherBeacon, [1,1,1], [0], {shiftNum:[0], rotation: [1,1,1]});
+
+        let options = [];
+        for (let currentShift = 0; currentShift < 6; currentShift++) {
+            let subOptions = [];
+            for (let currentRotation = 0; currentRotation < rotations.length; currentRotation++) {
+                subOptions.push(arrayMultiply(shift(this.otherBeaconDistances[otherBeacon.id], [currentShift]), rotations[currentRotation]));
+            }
+
+            options.push(subOptions);
+        }
+
+        this.potentialOtherBeaconDistances[otherBeacon.id] = options;
     }
 
     distanceTo(otherBeacon, rotation, shiftNum, otherScanner) {
         const shiftedCoords = [...arrayMultiply(shift(this.coordinates, shiftNum), rotation)];
-        //const otherShiftedCoords = [...otherScanner.origin];
-
-        //const otherShiftedCoords = [...shift(arrayMultiply(otherBeacon.coordinates, otherScanner.rotation), otherScanner.shiftNum)];
         const otherShiftedCoords = [...arrayMultiply(shift(otherBeacon.coordinates, otherScanner.shiftNum), otherScanner.rotation)];
-        //const otherShiftedCoords = otherBeacon.coordinates;
 
         return [
-            otherShiftedCoords[0] - shiftedCoords[0],// * rotation[0],
-            otherShiftedCoords[1] - shiftedCoords[1],// * rotation[1],
-            otherShiftedCoords[2] - shiftedCoords[2] //* rotation[2]
+            otherShiftedCoords[0] - shiftedCoords[0],
+            otherShiftedCoords[1] - shiftedCoords[1],
+            otherShiftedCoords[2] - shiftedCoords[2]
         ];
     }
 
@@ -264,6 +280,14 @@ class Scanner {
         }
     }
 
+    saveAdjustedOtherBeaconDistance() {
+        for (const beacon of this.beacons) {
+            for (const otherDistanceId in beacon.otherBeaconDistances) {
+                beacon.otherBeaconDistances[otherDistanceId] = arrayMultiply(shift(beacon.otherBeaconDistances[otherDistanceId], this.shiftNum), this.rotation);
+            }
+        }
+    }
+
     addCube(cube) {
         this.cubes.push(cube);
     }
@@ -278,29 +302,25 @@ class Scanner {
         let numShared = 0;
 
         for (let currentShift = 0; currentShift < 6; currentShift++) {
-            for (const rotation of rotations) {
-                for (const myBeacon of this.beacons) {
-                    for (const otherBeacon of otherScanner.beacons) {
+            for (let currentRotation = 0; currentRotation < rotations.length; currentRotation++) {
+                for (let myBeaconIndex = 0; myBeaconIndex < this.beacons.length; myBeaconIndex++) {
+                    for (let otherBeaconIndex = 0; otherBeaconIndex < otherScanner.beacons.length; otherBeaconIndex++) {
                         numShared = 0;
                         let numChecked = 0;
-                        for (const myDistanceId in myBeacon.otherBeaconDistances) {
-                            for (const otherDistanceId in otherBeacon.otherBeaconDistances) {
-                                const myShiftedCoord = shift(myBeacon.otherBeaconDistances[myDistanceId], [currentShift]);
-                                const myDistance = arrayMultiply(myShiftedCoord, rotation);
+                        for (const myDistanceId in this.beacons[myBeaconIndex].otherBeaconDistances) {
+                            for (const otherDistanceId in otherScanner.beacons[otherBeaconIndex].otherBeaconDistances) {
+                                const myDistance = this.beacons[myBeaconIndex].potentialOtherBeaconDistances[myDistanceId][currentShift][currentRotation];
+                                const otherCoordDistance = otherScanner.beacons[otherBeaconIndex].otherBeaconDistances[otherDistanceId];
 
-                                //const otherCoordDistance = shift(arrayMultiply(otherBeacon.otherBeaconDistances[otherDistanceId], otherScanner.rotation), otherScanner.shiftNum);
-                                const otherCoordDistance = arrayMultiply(shift(otherBeacon.otherBeaconDistances[otherDistanceId], otherScanner.shiftNum), otherScanner.rotation);
-
-                                //if (arrayEquals(otherBeacon.otherBeaconDistances[otherDistanceId], myDistance)) {
                                 if (arrayEquals(otherCoordDistance, myDistance)) {
                                     numShared++;
                                     if (numShared >= 11) {
-                                        return [myBeacon.distanceTo(otherBeacon, rotation, [currentShift], otherScanner), rotation, currentShift];
+                                        return [this.beacons[myBeaconIndex].distanceTo(otherScanner.beacons[otherBeaconIndex], rotations[currentRotation], [currentShift], otherScanner), rotations[currentRotation], currentShift];
                                     }
                                 }
                                 numChecked++;
                             }
-                            if (myBeacon.otherBeaconDistances.length - numChecked + numShared <11) {
+                            if (this.beacons[myBeaconIndex].otherBeaconDistances.length - numChecked + numShared <11) {
                                 break;
                             }
                         }
@@ -359,9 +379,7 @@ document.getElementById('inputfile').addEventListener('change', function () {
                     if (scanners[i].failedList.includes(scanners[j].id)) {
                         continue;
                     }
-
-                    drawScanner(scanners[i], pointSize);
-                    animate();
+                    
                     await delay(document.getElementById("moveSpeed").value);
 
                     const offsets = scanners[i].findSharedBeacons(scanners[j]);
@@ -372,6 +390,8 @@ document.getElementById('inputfile').addEventListener('change', function () {
                         scanners[i].origin = arrayAdd(offsets[0], scanners[j].origin);
                         scanners[i].solved = true;
                         console.log(i + " " + j);
+
+                        scanners[i].saveAdjustedOtherBeaconDistance();
 
                         drawScanner(scanners[i], pointSize);
 
