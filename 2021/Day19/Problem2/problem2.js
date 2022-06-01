@@ -147,6 +147,10 @@ function arrayAddUnique(array, newItem) {
     }
 }
 
+function manhattanDistance(location1, location2) {
+    return Math.abs(location1[0] - location2[0]) + Math.abs(location1[1] - location2[1]) + Math.abs(location1[2] - location2[2]);
+}
+
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 10000 );
 const axesHelper = new THREE.AxesHelper( 1200 );
@@ -417,17 +421,20 @@ document.getElementById('inputfile').addEventListener('change', function () {
             }
         }
 
-        const uniqueBeacons = [];
+        let maxDistance = 0;
 
-        for (const scanner of scanners) {
-            for (const beacon of scanner.beacons) {
-                arrayAddUnique(uniqueBeacons, beacon.getRealPosition(scanner));
+        for (const scanner1 of scanners) {
+            for (const scanner2 of scanners) {
+                const distance = manhattanDistance(scanner1.origin, scanner2.origin);
+                if (distance > maxDistance) {
+                    maxDistance = distance;
+                }
             }
         }
 
         drawLegend(scanners.length);
 
-        const answer = uniqueBeacons.length;
+        const answer = maxDistance;
         document.getElementById("answer").innerText = answer + "";
     }
 
