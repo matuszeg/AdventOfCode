@@ -1,0 +1,42 @@
+<html>
+<head><title>Problem 1</title></head>
+<link rel="stylesheet" href="problem1.css">
+<body>
+
+<div class="slidecontainer">
+    <h2>Speed</h2>
+    <input type="range" min="0" max="5000" value="300" class="slider" id="moveSpeed" />
+    <h3 id="moveSpeedValue">300</h3>
+    <div>
+        <label for="showProgress">Show Progress?</label>
+        <input type="checkbox" id="showProgress" name="showProgress"/>
+    </div>
+
+</div>
+
+<div>
+    <input type="file" name="inputfile" id="inputfile" />
+</div>
+
+<div>
+    <h2>Answer:</h2>
+    <h3 id="answer"></h3>
+</div>
+<div>
+    <h3 id="ongoing"></h3>
+    <h3 id="score"></h3>
+    <h3 id="turns"></h3>
+</div>
+<div id="map">
+
+</div>
+
+<div>Final Map</div>
+<div id="finalMap">
+
+</div>
+
+
+</body>
+<script src="problem1.js"></script>
+</html>
